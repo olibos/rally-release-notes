@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-
   export let value: Date;
   export let id: string = undefined;
 
