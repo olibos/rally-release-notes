@@ -1,12 +1,12 @@
 import type { Story } from './models';
 
 const host = window.location.host;
-export async function getReleaseNotes(from:Date = null, to: Date = null)
+export async function getReleaseNotes(webservice: string, from:Date = null, to: Date = null)
 {
-    // FIXME: Use from & to to filter stories.
     try
     {
-        const response = await fetch(`https://${host}/slm/webservice/v2.x/artifact?compact=true&includePermissions=true&key=BW7SwZMRpGV6JDP57shu8sxn37aEUAgpx4FVnAlDnw&fetch=TestFolder%2CDisplayColor%2CDefects%2CTestCase%2CRequirement%2CDirectChildrenCount%2CParent%2CName%2CTaskIndex%2CTasks%2CTestSet%2CAttachments%2CTestCases%2COwner%2Cc_Requestor%2CFormattedID%2CTags%2CProject%2CPortfolioItem%2CWorkProduct%2CDragAndDropRank%2CChildren%2Csum%3A%5B%5D&query=(((Tags%20contains%20%22%2Ftag%2F67131756153%22)%20AND%20(InProgressDate%20%3E%3D%20%222023-01-05T00%3A00%3A00.000%2B01%3A00%22))%20AND%20((ScheduleState%20%3D%20%22Completed%22)%20OR%20(ScheduleState%20%3D%20%22Accepted%22)))&start=1&pagesize=100&order=DragAndDropRank%20ASC&showHiddenFieldsForVersionedAlias=true&types=HierarchicalRequirement&project=%2Fproject%2F5b7406d8-5b26-4c2c-958b-6916033f6426&projectScopeUp=false&projectScopeDown=true`);
+        const url = filter(webservice, from, to);
+        const response = await fetch(url);
         const json = await response.json();
         return fixOwner(json.QueryResult.Results);
     }
@@ -1192,4 +1192,23 @@ function fixOwner(items: Story[])
     }
 
     return items;
+}
+
+function filter(webservice: string, from?: Date, to?: Date): URL
+{
+    //(InProgressDate >= \"2023-01-01T00:00:00.000+01:00\")) AND (AcceptedDate < \"2023-02-08T00:00:00.000+01:00\")
+    const url = new URL(webservice);
+    let query = url.searchParams.get('query');
+    if (from)
+    {
+        query += ` AND (InProgressDate >= \"${from.toISOString()}\")`
+    }
+
+    if (to)
+    {
+        query += ` AND (AcceptedDate <= \"${to.toISOString()}\")`
+    }
+
+    url.searchParams.set('query', query);
+    return url;
 }
