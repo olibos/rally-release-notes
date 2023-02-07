@@ -1201,12 +1201,12 @@ function filter(webservice: string, from?: Date, to?: Date): URL
     let query = url.searchParams.get('query');
     if (from)
     {
-        query += ` AND (InProgressDate >= \"${from.toISOString()}\")`
+        query = `(${query} AND (InProgressDate >= \"${from.toISOString().replace('Z', '+00:00')}\"))`
     }
 
     if (to)
     {
-        query += ` AND (AcceptedDate <= \"${to.toISOString()}\")`
+        query = `(${query} AND (AcceptedDate <= \"${to.toISOString().replace('Z', '+00:00')}\"))`;
     }
 
     url.searchParams.set('query', query);
