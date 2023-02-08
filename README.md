@@ -11,4 +11,4 @@ Follow instructions [here](https://rally-rn.bossaer.eu/)
 - Test on your local server http://127.0.0.1:5173/
 
 ## Issue, bug, suggestions ?
-Don't hesitate to open an [issue](https://github.com/olibos/rally-release-notes/issues/new) or even better make a PR with your proposal
+Don't hesitate to open an [issue](https://github.com/olibos/rally-release-notes/issues/new) or even better make a PR with your proposal.
