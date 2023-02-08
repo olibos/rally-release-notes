@@ -1196,12 +1196,11 @@ function fixOwner(items: Story[])
 
 function filter(webservice: string, from?: Date, to?: Date): URL
 {
-    //(InProgressDate >= \"2023-01-01T00:00:00.000+01:00\")) AND (AcceptedDate < \"2023-02-08T00:00:00.000+01:00\")
     const url = new URL(webservice);
     let query = url.searchParams.get('query');
     if (from)
     {
-        query = `(${query} AND (InProgressDate >= \"${from.toISOString().replace('Z', '+00:00')}\"))`
+        query = `(${query} AND (AcceptedDate >= \"${from.toISOString().replace('Z', '+00:00')}\"))`
     }
 
     if (to)
