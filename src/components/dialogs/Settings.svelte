@@ -19,11 +19,17 @@
 
 <script lang="ts">
   import { major, minor, patch } from "@/store/version";
-  import { url, getSettingsSource, lastReleaseDate, setSettings } from "@/store/settings";
+  import {
+    url,
+    getSettingsSource,
+    lastReleaseDate,
+    setSettings,
+  } from "@/store/settings";
   import { marked } from "marked";
   import mustache from "mustache";
   import { getReleaseNotes } from "@/data/rally";
   import InputDate from "@/components/forms/InputDate.svelte";
+  import { hasStoryUrl, lastStoryUrl } from "@/store/webservice";
 
   let dialog: HTMLDialogElement;
   let saved: HTMLDialogElement;
@@ -157,6 +163,10 @@ ${notes
     });
   }
 
+  function copyLastStoryFilter() {
+    $url = $lastStoryUrl;
+  }
+
   function toggleAdvanced() {
     showAdvanced = !showAdvanced;
   }
@@ -209,18 +219,28 @@ ${notes
     <div class="advanced">
       <button
         type="button"
+        class="toggle"
         class:collapsed={!showAdvanced}
         on:click={toggleAdvanced}>Advanced</button
       >
       {#if showAdvanced}
-      <div class="form-control">
-        <label for="url">WebService: </label>
-        <input type="text" id="url" bind:value={$url} />
-      </div>
-      <div class="form-control">
-        <label for="template">Template: </label>
-        <textarea id="template" bind:value={yaml} rows={10}></textarea>
-      </div>
+        <div class="form-control">
+          <label for="url">
+            WebService:
+            <button
+              type="button"
+              on:click={copyLastStoryFilter}
+              disabled={!$hasStoryUrl}
+            >
+              📋
+            </button>
+          </label>
+          <input type="text" id="url" bind:value={$url} />
+        </div>
+        <div class="form-control">
+          <label for="template">Template: </label>
+          <textarea id="template" bind:value={yaml} rows={10} />
+        </div>
       {/if}
     </div>
     <footer>
@@ -274,12 +294,14 @@ ${notes
     position: relative;
     margin: 5px 0;
   }
-  input, textarea {
+  input,
+  textarea {
     padding: 5px;
     border: solid 1px #ccc;
     border-radius: 5px;
   }
-  input:focus, textarea:focus {
+  input:focus,
+  textarea:focus {
     outline-color: #007bff;
   }
   .form-control label {
@@ -293,22 +315,23 @@ ${notes
     border-radius: 0.25rem;
     margin: 10px 0;
   }
-  .advanced label{
+  .advanced label {
     display: block;
+    width: auto;
   }
-  .advanced .form-control
-  {
+  .advanced .form-control {
     margin: 10px;
   }
-  .advanced textarea, .advanced input[type="text"]{
+  .advanced textarea,
+  .advanced input[type="text"] {
     width: 98%;
     margin: 0 auto;
   }
 
-  .advanced textarea{
+  .advanced textarea {
     resize: vertical;
   }
-  .advanced button {
+  .advanced button.toggle {
     border-radius: calc(0.25rem - 1px);
     cursor: pointer;
     position: relative;
@@ -326,7 +349,7 @@ ${notes
       border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
       border-radius 0.15s ease;
   }
-  .advanced button:after {
+  .advanced button.toggle:after {
     width: 1.25rem;
     height: 1.25rem;
     margin-left: auto;
@@ -337,13 +360,13 @@ ${notes
     transition: transform 0.2s ease-in-out;
   }
 
-  .advanced button:not(.collapsed) {
+  .advanced button.toggle:not(.collapsed) {
     color: #0c63e4;
     background-color: #e7f1ff;
     box-shadow: inset 0 -1px 0 rgb(0 0 0 / 13%);
   }
 
-  .advanced button:not(.collapsed):after {
+  .advanced button.toggle:not(.collapsed):after {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%230c63e4'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
     transform: rotate(-180deg);
   }
