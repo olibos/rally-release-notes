@@ -1,4 +1,7 @@
-import type { Story } from './models';
+import type {
+  Owner,
+  Story,
+} from './models';
 
 const host = window.location.host;
 export async function getReleaseNotes(webservice: string, from:Date = null, to: Date = null)
@@ -1171,6 +1174,12 @@ function fixOwner(items: Story[])
 {
     const squad = location.hash.substring(2).split('/')[0] ?? '66811577677d';
     const owners = new Map<string, string>();
+    const user: Owner = window['Rally']?.context?.context?.user;
+    if (user)
+    {
+        owners.set(user._ref, user._refObjectName);
+    }
+    
     for (const item of items)
     {
         if (item._ref)
