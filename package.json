@@ -23,6 +23,6 @@
   "dependencies": {
     "marked": "^4.2.12",
     "mustache": "^4.2.0",
-    "yaml": "^2.2.1"
+    "yaml": "^2.2.2"
   }
 }
