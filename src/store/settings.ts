@@ -5,6 +5,8 @@ export interface Category {
 	title: string;
 	labels: string[];
 	label?: string;
+  exclude?: string;
+  excludes?: string[];
 }
 
 export interface Major {
@@ -60,6 +62,23 @@ categories:
     label: 'hosting'
   - title: '🧰 Maintenance'
     labels:
+      - 'chore'
+      - 'documentation'
+      - 'dependencies'
+      - 'maintenance'
+  - title: '🆕 Other Changes'
+    excludes:
+      - 'breaking'
+      - 'major'
+      - 'new-feature'
+      - 'feature'
+      - 'enhancement'
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+      - 'test'
+      - 'ci'
+      - 'hosting'
       - 'chore'
       - 'documentation'
       - 'dependencies'

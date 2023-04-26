@@ -2,6 +2,8 @@
   import type { TagsNameArray } from "@/data/models";
 
   function hasLabel(tags: Iterable<TagsNameArray>, list: Iterable<string>) {
+    if (!list) return false;
+    
     for (const { Name: tag } of tags) {
       for (const tag2 of list) {
         if (
@@ -60,8 +62,8 @@
               category.labels = [category.label];
             }
 
-            if (!category.labels?.length) {
-              continue;
+            if (!category.excludes && category.exclude) {
+              category.excludes = [category.exclude];
             }
 
             const notes = releaseNotes.filter(({ Tags }) => {
@@ -98,20 +100,10 @@
                 hasPatch = true;
               }
 
-              for (const label of category.labels) {
-                if (
-                  Tags._tagsNameArray.find(
-                    ({ Name }) =>
-                      Name.localeCompare(label, "fr", {
-                        sensitivity: "base",
-                      }) === 0
-                  )
-                ) {
-                  return true;
-                }
-              }
+              const isExcluded = hasLabel(Tags._tagsNameArray, category.excludes);
+              if (isExcluded) return false;
 
-              return false;
+              return !category.labels?.length || hasLabel(Tags._tagsNameArray, category.labels);
             });
 
             if (!notes.length) {
